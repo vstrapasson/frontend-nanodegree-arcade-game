@@ -1,7 +1,23 @@
+'use strict'
+/**
+ * Game settings
+ */
+const config = {
+  player: {
+    initialX: 200,
+    initialY: 400,
+    moveSpeed: 50,
+    sprite: 'images/char-boy.png'
+  },
+  enemyQuantity: 5
+}
+
+/**
+ * Return a random value between two numbers
+ */
 function getRandomBetween(min, max) {
   return Math.random() * (max - min) + min;
 }
-
 
 var Enemy = function() {
     this.x = getRandomBetween(-10, 10) * 50; //Randomize start position of enemies
@@ -24,6 +40,9 @@ Enemy.prototype.update = function(dt) {
     this.checkCollision();
 };
 
+/**
+ * Check if enemy was collided with the player
+ */
 Enemy.prototype.checkCollision = function() {
     const area = 50;
 
@@ -48,11 +67,12 @@ Enemy.prototype.restartPosition = function() {
 }
 
 var Player = function() {
-    this.sprite = 'images/char-boy.png';
+    const playerConfig = config.player;
+    this.sprite = playerConfig.sprite;
 
-    this.x = 200;
-    this.y = 400;
-    this.moveSpeed = 50;
+    this.x = playerConfig.initialX;
+    this.y = playerConfig.initialY;
+    this.moveSpeed = playerConfig.moveSpeed;
 
     this.dies  = 0;
     this.score = 0
@@ -63,22 +83,34 @@ Player.prototype.die = function() {
     this.restartPosition();
 };
 
+/**
+ * Check if player reached to the objective
+ */
 Player.prototype.checkWin = function() {
     if (this.y < 0  ) {
         this.win();
     }
 };
 
+/**
+ * Restart position of player and increment the score
+ */
 Player.prototype.win = function() {
     this.score++;
     this.restartPosition();
 };
 
+/**
+ * Restart player to initial possition
+ */
 Player.prototype.restartPosition = function() {
-    this.x = 200;
-    this.y = 400;
+    this.x = config.player.initialX;
+    this.y = config.player.initialY;
 };
 
+/**
+ * Handle player movement
+ */
 Player.prototype.handleInput = function(key) {
     if(!key) {
         return false;
@@ -118,7 +150,7 @@ Player.prototype.handleInput = function(key) {
 };
 
 Player.prototype.update = function() {
-    
+
 };
 
 Player.prototype.render = function() {
@@ -127,13 +159,10 @@ Player.prototype.render = function() {
 
 const player = new Player();
 
-
-const allEnemies = [
-    new Enemy(),
-    new Enemy(),
-    new Enemy(),
-    new Enemy(),
-];
+const allEnemies = [];
+for (var i = 0; i <= config.enemyQuantity; i++) {
+  allEnemies.push(new Enemy())
+}
 
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
